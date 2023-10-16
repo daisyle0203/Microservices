@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.math.BigDecimal;
-
 @RestController
 public class CurrencyExchangeController {
 
+    @Autowired
+    private CurrencyExchangeRepository repository;
     // Get the value of the port
     @Autowired
     private Environment environment;
@@ -19,10 +19,16 @@ public class CurrencyExchangeController {
             @PathVariable String from,
             @PathVariable String to
     ) {
-        CurrencyExchange currencyExchange = new CurrencyExchange(1000L, "USD", "INR", BigDecimal.valueOf(50));
+        // CurrencyExchange currencyExchange = new CurrencyExchange(1000L, "USD", "INR", BigDecimal.valueOf(50));
+        // Instead of hardcoding the values, we will get the values from the database using JPA
+        CurrencyExchange currencyExchange = repository.findByFromAndTo(from, to);
+        if(currencyExchange == null) {
+            throw new RuntimeException("Unable to find data for " + from + " to " + to);
+        }
         // Extract the port from the environment and set it into the response
         String port = environment.getProperty("local.server.port");
         currencyExchange.setEnvironment(port);
+
         return currencyExchange;
     }
 }
