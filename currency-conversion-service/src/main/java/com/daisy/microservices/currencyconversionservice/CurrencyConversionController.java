@@ -14,7 +14,7 @@ import java.util.HashMap;
 public class CurrencyConversionController {
     @Autowired
     private CurrencyExchangeProxy proxy;
-    @GetMapping("/currency-converter/from/{from}/to/{to}/quantity/{quantity}")
+    @GetMapping("/currency-conversion/from/{from}/to/{to}/quantity/{quantity}")
     public CurrencyConversion convertCurrency(
             @PathVariable String from,
             @PathVariable String to,
@@ -36,7 +36,7 @@ public class CurrencyConversionController {
                 currencyConversion.getEnvironment()+ " " + "rest template");
     }
 
-    @GetMapping("/currency-converter-feign/from/{from}/to/{to}/quantity/{quantity}")
+    @GetMapping("/currency-conversion-feign/from/{from}/to/{to}/quantity/{quantity}")
     public CurrencyConversion convertCurrencyConversionFeign(
             @PathVariable String from,
             @PathVariable String to,

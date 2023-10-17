@@ -17,21 +17,20 @@ public class ApiGatewayConfiguration {
                                 .addRequestHeader("MyHeader", "MyURI")
                                 .addRequestParameter("Param", "MyValue"))
                         .uri("http://httpbin.org:80"))
-                .route(p -> p
-                        .path("/currency-exchange/**")
+                .route(p -> p.path("/currency-exchange/**")
                         .uri("lb://currency-exchange"))
-                .route(p -> p
-                        .path("/currency-conversion/**")
+                .route(p -> p.path("/currency-conversion/**")
                         .uri("lb://currency-conversion"))
-                .route(p -> p
-                        .path("/currency-conversion-feign/**")
+                .route(p -> p.path("/currency-conversion-feign/**")
                         .uri("lb://currency-conversion"))
-                .route(p -> p
-                        .path("/currency-conversion-new/**")
-                        .filters(f -> f
-                                .rewritePath(
-                                        "/currency-conversion-new/(?<segment>.*)",
-                                        "/currency-conversion-feign/${segment}"))
+                // It routes requests with paths starting with "/currency-conversion-new" to the "currency-conversion" service using load balancing.
+                // However, it also includes a path rewrite using the rewritePath filter.
+                // It transforms the incoming path from "/currency-conversion-new/..." to "/currency-conversion-feign/...".
+                // This allows for a different path structure in the gateway than what the downstream service expects.
+                .route(p -> p.path("/currency-conversion-new/**")
+                        .filters(f -> f.rewritePath(
+                                "/currency-conversion-new/(?<segment>.*)",
+                                "/currency-conversion-feign/${segment}"))
                         .uri("lb://currency-conversion"))
                 .build();
     }
